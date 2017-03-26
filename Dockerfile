@@ -1,4 +1,4 @@
-FROM centos7-node
+FROM cubedhost/centos7-node
 
 RUN yum -y install \
 		ca-certificates \

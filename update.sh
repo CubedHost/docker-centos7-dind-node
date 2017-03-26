@@ -13,7 +13,7 @@ cp -a docker/$DOCKER_VER/. ./
 cp -a ./dind/. ./
 rm Dockerfile
 
-sed "s/apk add --no-cache/yum -y install/g;s/FROM.*/FROM centos7-node/g" docker/$DOCKER_VER/Dockerfile > Dockerfile
+sed "s/apk add --no-cache/yum -y install/g;s/FROM.*/FROM cubedhost\/centos7-node/g" docker/$DOCKER_VER/Dockerfile > Dockerfile
 echo "RUN yum -y install wget which" >> Dockerfile
 sed "s/apk add --no-cache/yum -y install/g;s/adduser -S -G/useradd -g/g;s/addgroup -S/groupadd/g;/FROM.*/d" docker/$DOCKER_VER/dind/Dockerfile >> Dockerfile 
 
