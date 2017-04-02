@@ -15,7 +15,7 @@ sed "s/apk add --no-cache/yum -y install/g;
     /CMD/d" \
     docker/$DOCKER_VER/Dockerfile > Dockerfile
 
-echo "RUN yum -y install wget which" >> Dockerfile
+echo "RUN yum -y install rsync wget which" >> Dockerfile
 sed "s/apk add --no-cache/yum -y install/g;s/adduser -S -G/useradd -g/g;s/addgroup -S/groupadd/g;/FROM.*/d" docker/$DOCKER_VER/dind/Dockerfile >> Dockerfile 
 
 rm -rf docker
