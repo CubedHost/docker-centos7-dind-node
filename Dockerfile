@@ -1,39 +1,38 @@
 FROM cubedhost/centos7-node
 
-RUN yum -y install \
-		ca-certificates \
-		curl \
-		openssl
+ENV DOCKER_CHANNEL stable
+ENV DOCKER_VERSION 17.03.2-ce
 
-ENV DOCKER_BUCKET get.docker.com
-ENV DOCKER_VERSION 17.03.1-ce
-ENV DOCKER_SHA256 820d13b5699b5df63f7032c8517a5f118a44e2be548dd03271a86656a544af55
+# Docker deps
+RUN set -ex; \
+    yum -y install \
+    btrfs-progs \
+    e2fsprogs \
+    e2fsprogs-extra \
+    iptables \
+    xfsprogs \
+    xz \
+    ca-certificates \
+    curl \
+    tar \
+    libressl \
+# Additional deps
+    rsync \
+    wget \
+    which
 
-RUN set -x \
-	&& curl -fSL "https://${DOCKER_BUCKET}/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz" -o docker.tgz \
-	&& echo "${DOCKER_SHA256} *docker.tgz" | sha256sum -c - \
-	&& tar -xzvf docker.tgz \
-	&& mv docker/* /usr/local/bin/ \
-	&& rmdir docker \
-	&& rm docker.tgz \
-	&& docker -v
-
-
-RUN yum -y install rsync wget which
-
-# https://github.com/docker/docker/blob/master/project/PACKAGERS.md#runtime-dependencies
-RUN yum -y install \
-		btrfs-progs \
-		e2fsprogs \
-		e2fsprogs-extra \
-		iptables \
-		xfsprogs \
-		xz
-
-# TODO aufs-tools
+RUN set -ex; \
+    export DOCKER_ARCH=$(arch); \
+	curl -fL -o docker.tgz "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${DOCKER_ARCH}/docker-${DOCKER_VERSION}.tgz" && \
+	tar xvf docker.tgz \
+		--strip-components 1 \
+		--directory /usr/local/bin/ && \
+	rm docker.tgz; \
+	dockerd -v; \
+	docker -v
 
 # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box
-RUN set -x \
+RUN set -ex \
 	&& groupadd dockremap \
 	&& useradd -g dockremap dockremap \
 	&& echo 'dockremap:165536:65536' >> /etc/subuid \
@@ -41,10 +40,13 @@ RUN set -x \
 
 ENV DIND_COMMIT 3b5fac462d21ca164b3778647420016315289034
 
-RUN wget "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" -O /usr/local/bin/dind \
-	&& chmod +x /usr/local/bin/dind
+RUN set -ex; \
+	wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" && \
+	chmod +x /usr/local/bin/dind
 
 COPY dockerd-entrypoint.sh /usr/local/bin/
+RUN set -ex ;\
+    chmod +x /usr/local/bin/dockerd-entrypoint.sh
 
 VOLUME /var/lib/docker
 EXPOSE 2375
