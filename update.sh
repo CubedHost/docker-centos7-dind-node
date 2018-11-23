@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_VER=17.03
+DOCKER_VER=18.06
 
 echo "Docker Version: ${DOCKER_VER}"
 
