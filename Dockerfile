@@ -19,7 +19,8 @@ RUN set -ex; \
 # Additional deps
     rsync \
     wget \
-    which
+    which \
+    iproute
 
 RUN set -ex; \
     export DOCKER_ARCH=$(arch); \
