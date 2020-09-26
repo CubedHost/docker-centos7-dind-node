@@ -1,7 +1,7 @@
 FROM cubedhost/centos7-node:node14
 
 ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 18.06.1-ce
+ENV DOCKER_VERSION 19.03.13
 
 # Docker deps
 RUN set -ex; \
