@@ -1,4 +1,4 @@
-FROM cubedhost/centos7-node:node10
+FROM cubedhost/centos7-node:node16
 
 ENV DOCKER_CHANNEL stable
 ENV DOCKER_VERSION 18.06.1-ce
